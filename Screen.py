@@ -1,15 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 Screen Stocks
 Type: Tool
 Auther: Arda
 """
-
+# Public package
 import requests
-import json
 from bs4 import BeautifulSoup
 import datetime
+
+# My package
+import permission2trade as p2t 
 
 
 # Request web page with url and method get.
@@ -70,12 +73,14 @@ def amplitudefilter(rowData):
                 AmpFilterResult.append([stockNum, stockName, stockPrice,
                                         str(stockAmp) + '%', stockVol])
     
-    return AmpFilterResult
+    return AmpFilterResult, date[0]  
    
     
 def main():    
     urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
-    StockCandidate1 = amplitudefilter(geturl(urlAmp))
+    StockCandidate1, date = amplitudefilter(geturl(urlAmp))
+    StockCandidate2 = p2t.permission(date).sbmsbellowpar(StockCandidate1)
+    
     
     
 if __name__ == '__main__':
