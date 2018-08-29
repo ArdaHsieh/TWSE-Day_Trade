@@ -6,14 +6,14 @@ Screen Stocks
 Type: Tool
 Auther: Arda
 """
-# Public package
+# Public modules
 import requests
 from bs4 import BeautifulSoup
 import datetime
 
-# My package
+# My modules
 import permit2trade as p2t
-#import techanalysis as tanal
+import techanalysis as ta
 
 
 # Request web page with url and method get.
@@ -77,14 +77,15 @@ def amplitudefilter(rowData):
     return AmpFilterResult, date[0]  
    
     
-def main():    
-    urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
-    StockCandidate, date = amplitudefilter(geturl(urlAmp))
-    StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, '20180830')
-    StockCandidate = p2t.permission().daytradeable(StockCandidate, '20180830')
-    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180830')
-    
-    print(StockCandidate)
+def main():  
+    #urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
+    #StockCandidate, date = amplitudefilter(geturl(urlAmp))
+    #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, '20180830')
+    #StockCandidate = p2t.permission().daytradeable(StockCandidate, '20180830')
+    #StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180830')
+  
+    #print(StockCandidate)
+    print(ta.techmethod().rsi('0050', 5, '20180829'))
     
     
     

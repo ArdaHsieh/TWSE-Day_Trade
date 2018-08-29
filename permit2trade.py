@@ -38,8 +38,7 @@ class permission:
     # Return a 2-D stock list.
     def sbmsbellowpar(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWT92U?response=json&date=" + date
-        htmlJsonTWSE = self.geturl(urlTWSE)
-        SBMSData = json.loads(htmlJsonTWSE)['data']
+        SBMSData = json.loads(self.geturl(urlTWSE))['data']
     
         SBMSResult = []
         
@@ -61,8 +60,7 @@ class permission:
     # Return a 2-D stock list.
     def daytradeable(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        htmlJsonTWSE = self.geturl(urlTWSE)
-        DayTradeData = json.loads(htmlJsonTWSE)['data']
+        DayTradeData = json.loads(self.geturl(urlTWSE))['data']
     
         DayTradeResult = []
         
@@ -83,8 +81,7 @@ class permission:
     # Return a 2-D stock list.
     def cansellb4buy(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        htmlJsonTWSE = self.geturl(urlTWSE)
-        CanSb4BData = json.loads(htmlJsonTWSE)['data']
+        CanSb4BData = json.loads(self.geturl(urlTWSE))['data']
     
         CanSb4BResult = []
         
