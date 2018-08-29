@@ -12,7 +12,8 @@ from bs4 import BeautifulSoup
 import datetime
 
 # My package
-import permission2trade as p2t 
+import permit2trade as p2t
+#import techanalysis as tanal
 
 
 # Request web page with url and method get.
@@ -78,8 +79,12 @@ def amplitudefilter(rowData):
     
 def main():    
     urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
-    StockCandidate1, date = amplitudefilter(geturl(urlAmp))
-    StockCandidate2 = p2t.permission(date).sbmsbellowpar(StockCandidate1)
+    StockCandidate, date = amplitudefilter(geturl(urlAmp))
+    StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, '20180830')
+    StockCandidate = p2t.permission().daytradeable(StockCandidate, '20180830')
+    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180830')
+    
+    print(StockCandidate)
     
     
     
