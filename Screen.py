@@ -10,6 +10,7 @@ Auther: Arda
 import requests
 from bs4 import BeautifulSoup
 import datetime
+import time
 
 # My modules
 import permit2trade as p2t
@@ -74,20 +75,30 @@ def amplitudefilter(rowData):
                 AmpFilterResult.append([stockNum, stockName, stockPrice,
                                         str(stockAmp) + '%', stockVol])
     
-    return AmpFilterResult, date[0]  
+    return AmpFilterResult   
    
     
 def main():  
-    #urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
-    #StockCandidate, date = amplitudefilter(geturl(urlAmp))
-    #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, '20180830')
-    #StockCandidate = p2t.permission().daytradeable(StockCandidate, '20180830')
-    #StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180830')
+    urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
+    StockCandidate = amplitudefilter(geturl(urlAmp))
+
+    date = '20180830'
+    StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
+    StockCandidate = p2t.permission().daytradeable(StockCandidate, date)
+    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, date)
   
-    #print(StockCandidate)
-    print(ta.techmethod().rsi('0050', 5, '20180829'))
+    DayTradeCandidate = []
+    for stock in StockCandidate:
+        rsi = ta.techmethod().rsi(stock[0], 5, date)
+        print(stock[1])
+        print(rsi)
+        if rsi < 85.0 and rsi > 15.0:
+            DayTradeCandidate.append(stock)
+        time.sleep(5)
     
-    
+    for stock in DayTradeCandidate:
+        print(stock)
+        
     
 if __name__ == '__main__':
     main()
