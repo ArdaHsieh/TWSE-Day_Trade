@@ -12,9 +12,10 @@ import datetime
 import time
 
 # My modules
-import basiccarwlmethod as bcmethod
+import basiccrawlmethod as bcmethod
 import permit2trade as p2t
 import techanalysis as ta
+import parmsetting as parm
 
 
 # Return stocks whose amplitude is above 5% 

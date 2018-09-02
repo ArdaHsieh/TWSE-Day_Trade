@@ -10,7 +10,7 @@ Auther: Arda
 import json
 
 # My modules
-import basiccarwlmethod as bcmethod
+import basiccrawlmethod as bcmethod
 
 
 class techmethod:
@@ -19,11 +19,11 @@ class techmethod:
     # for example rsi('0050', '20180830', 5)
     # date = yyyymmdd
     # Return a float, for example, 65.5 means RSI = 65.5% .
-    def rsi(self, stocknum, date, days=5):
+    def rsi(self, stockNum, date, days=5):
         dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
         url = ( 'https://www.wantgoo.com/stock/' 
               + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
-              + 'StockNo=' + stocknum 
+              + 'StockNo=' + stockNum 
               + '&Kcounts=245&Type=%E6%97%A5K_RSI&isCleanCache=false')
         
         rsiDataText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']
@@ -39,18 +39,18 @@ class techmethod:
                 break
     
     
-    # MA (Relative Strength Index)
+    # MA (Moving Average)
     # Call ma as ma(stock number, date, days) => rsi(str, str, int)
     # days = 5, 10, 20, 60, 120
     # for example ma('0050', '20180830', 5)
     # date = yyyymmdd
     # Return a float.
-    def ma(self, stocknum, date, days=20):
+    def ma(self, stockNum, date, days=20):
         Days = [5, 10, 20, 60, 120]
         dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
         url = ( 'https://www.wantgoo.com/stock/'
               + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
-              + 'StockNo=' + stocknum
+              + 'StockNo=' + stockNum
               + '&Kcounts=120&Type=%E6%97%A5K_K%E7%B7%9A%7C%E6%97%A5&isCleanCache=false')
         
         maDataText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']

@@ -6,30 +6,16 @@ TWSE permissions of trade.
 Type: class, Tool
 Auther: Arda
 """
-
-import requests
+# Public modules
 import json
 from bs4 import BeautifulSoup
 import datetime
 
+# My modules
+from basiccrawlmethod import htmlgetter as getter
+
 
 class permission:
-    #def __init__(self, date):
-    #    self.date = date
-        
-        
-    # Request web page with url and the method GET.
-    # Is an inside class function.
-    def geturl(self, url):
-        headers = {
-                   'user-agent': 'Mozilla/5.0 (Windows NT 6.1)'
-                               + 'AppleWebKit/537.36 (KHTML, like Gecko)'
-                               + 'Chrome/52.0.2743.116 Safari/537.36'
-                  }
-    
-        return requests.get(url, headers = headers).text.encode('utf-8-sig')
-    
-    
     # Permission for Security-borrowing & Margin-selling bellow price unchange(par).
     # Call sbmsbellowpar as sbmsbellowpar(StockCandidate, date)
     # StockCandidate must be a 2-D array and start with [0] stock#, [1]stock name.
@@ -38,7 +24,7 @@ class permission:
     # Return a 2-D stock list.
     def sbmsbellowpar(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWT92U?response=json&date=" + date
-        SBMSData = json.loads(self.geturl(urlTWSE))['data']
+        SBMSData = json.loads(getter.geturl(urlTWSE))['data']
     
         SBMSResult = []
         
@@ -60,7 +46,7 @@ class permission:
     # Return a 2-D stock list.
     def daytradeable(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        DayTradeData = json.loads(self.geturl(urlTWSE))['data']
+        DayTradeData = json.loads(getter.geturl(urlTWSE))['data']
     
         DayTradeResult = []
         
@@ -81,7 +67,7 @@ class permission:
     # Return a 2-D stock list.
     def cansellb4buy(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        CanSb4BData = json.loads(self.geturl(urlTWSE))['data']
+        CanSb4BData = json.loads(getter.geturl(urlTWSE))['data']
     
         CanSb4BResult = []
         
