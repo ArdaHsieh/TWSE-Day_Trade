@@ -6,81 +6,62 @@ TWSE technical analysis.
 Type: class, Tool
 Auther: Arda
 """
-
-import requests
+# Public modules
 import json
-from bs4 import BeautifulSoup
-import datetime
-import numpy as np
+
+# My modules
+import basiccarwlmethod as bcmethod
 
 
 class techmethod:
-    # Request web page with url and the method GET.
-    # Is an inside class function.
-    def geturl(self, url):
-        headers = {
-                   'user-agent': 'Mozilla/5.0 (Windows NT 6.1)'
-                               + 'AppleWebKit/537.36 (KHTML, like Gecko)'
-                               + 'Chrome/52.0.2743.116 Safari/537.36'
-                  }
-    
-        return requests.get(url, headers = headers).text.encode('utf-8-sig')
-    
-    
     # RSI (Relative Strength Index)
-    # Call rsi as rsi(stock number, days, date) => rsi(str, int, str)
-    # for example rsi('0050', 5, '20180830')
+    # Call rsi as rsi(stock number, date, days) => rsi(str, str, int)
+    # for example rsi('0050', '20180830', 5)
     # date = yyyymmdd
     # Return a float, for example, 65.5 means RSI = 65.5% .
-    def rsi(self, stocknum, days, date):
-        # Get last month and last last month.
-        if int(date[6:8]) > 15:
-            pre1 = str(datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) 
-                      - datetime.timedelta(days=31))
-        else:
-            pre1 = str(datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) 
-                      - datetime.timedelta(days=15))
-        pre1 = pre1.split('-')
-        pre1month = pre1[0] + pre1[1] + pre1[2]
+    def rsi(self, stocknum, date, days=5):
+        dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
+        url = ( 'https://www.wantgoo.com/stock/' 
+              + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
+              + 'StockNo=' + stocknum 
+              + '&Kcounts=245&Type=%E6%97%A5K_RSI&isCleanCache=false')
         
+        rsiDataText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']
+        data = rsiDataText.split('=')
+
+        rsiData = data[int(days/5)].split(';')
+        RsiData = rsiData[0].split(',')
+        RsiData = RsiData[::-1]
         
-        if int(date[6:8]) > 15:
-            pre2 = str(datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) 
-                      - datetime.timedelta(days=62))
-        else:
-            pre2 = str(datetime.date(int(date[0:4]), int(date[4:6]), int(date[6:8])) 
-                      - datetime.timedelta(days=46))
-        pre2 = pre2.split('-')
-        pre2month = pre2[0] + pre2[1] + pre2[2]
-        
-        # Get data              
-        urlTWSE = "http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + pre2month + "&stockNo=" + stocknum
-        RSIBData2 = json.loads(self.geturl(urlTWSE))['data']
-        
-        urlTWSE = "http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + pre1month + "&stockNo=" + stocknum
-        RSIBData1 = json.loads(self.geturl(urlTWSE))['data']
-        
-        urlTWSE = "http://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=" + date + "&stockNo=" + stocknum
-        RSIBData0= json.loads(self.geturl(urlTWSE))['data']
-        
-        RSIBData = np.append(RSIBData2, RSIBData1, axis=0)
-        RSIBData = np.append(RSIBData, RSIBData0, axis=0)
-        RSIBData = RSIBData[::-1]
-        
-        # Get start index
-        date = str(int(date[0:4])-1911) + '/' + date[4:6] + '/' + date[6:8]
-        for i in range(len(RSIBData)):
-            if date == RSIBData[i][0]:
-                startindex = i
+        for i in range(len(RsiData)):
+            if RsiData[i] == dateTS:
+                return float(RsiData[i-1][0:-2])
                 break
+    
+    
+    # MA (Relative Strength Index)
+    # Call ma as ma(stock number, date, days) => rsi(str, str, int)
+    # days = 5, 10, 20, 60, 120
+    # for example ma('0050', '20180830', 5)
+    # date = yyyymmdd
+    # Return a float.
+    def ma(self, stocknum, date, days=20):
+        Days = [5, 10, 20, 60, 120]
+        dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
+        url = ( 'https://www.wantgoo.com/stock/'
+              + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
+              + 'StockNo=' + stocknum
+              + '&Kcounts=120&Type=%E6%97%A5K_K%E7%B7%9A%7C%E6%97%A5&isCleanCache=false')
         
-        # Calculate RSI
-        up = 0.0
-        down = 0.0
-        for i in range(startindex, startindex+int(days)):
-            if RSIBData[i][-2][0] == '+':
-                up += float(RSIBData[i][-2][1::])
-            elif RSIBData[i][-2][0] == '-':
-                down = float(RSIBData[i][-2][1::])
+        maDataText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']
+        data = maDataText.split('=')
         
-        return (100.0 * up) / (up + down)
+        i = Days.index(days) + 3
+        maData = data[i].split(';')
+        MaData = maData[0].split(',')
+        MaData = MaData[::-1]
+        
+        for j in range(len(MaData)):
+            if MaData[j] == dateTS:
+                return float(MaData[j-1][0:-2])
+                break

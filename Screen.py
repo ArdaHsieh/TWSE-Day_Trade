@@ -7,25 +7,14 @@ Type: Tool
 Auther: Arda
 """
 # Public modules
-import requests
 from bs4 import BeautifulSoup
 import datetime
 import time
 
 # My modules
+import basiccarwlmethod as bcmethod
 import permit2trade as p2t
 import techanalysis as ta
-
-
-# Request web page with url and method get.
-def geturl(url):
-    headers = {
-               'user-agent': 'Mozilla/5.0 (Windows NT 6.1)'
-                           + 'AppleWebKit/537.36 (KHTML, like Gecko)'
-                           + 'Chrome/52.0.2743.116 Safari/537.36'
-              }
-    
-    return requests.get(url, headers = headers).text.encode('utf-8-sig')
 
 
 # Return stocks whose amplitude is above 5% 
@@ -35,8 +24,8 @@ def amplitudefilter(rowData):
     
     # Check date of data. (WebDate == Today)
     # Web update date.
-    time = soup.find_all('time', {'class':'update'})
-    date = time[0].text.split(' ')
+    timeelement = soup.find_all('time', {'class':'update'})
+    date = timeelement[0].text.split(' ')
     # Today
     today = str(datetime.datetime.now().date())
     today = today[0:4] + '/' + today[5:7] + '/' + today[8:10]
@@ -79,26 +68,26 @@ def amplitudefilter(rowData):
    
     
 def main():  
+    date = '20180831'
     urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
-    StockCandidate = amplitudefilter(geturl(urlAmp))
-
-    date = '20180830'
-    StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
+    StockCandidate = amplitudefilter(bcmethod.htmlgetter().geturl(urlAmp))
+    
+    #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
     StockCandidate = p2t.permission().daytradeable(StockCandidate, date)
-    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, date)
+    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180903')
   
     DayTradeCandidate = []
     for stock in StockCandidate:
-        rsi = ta.techmethod().rsi(stock[0], 5, date)
-        print(stock[1])
-        print(rsi)
+        time.sleep(4)
+        rsi = ta.techmethod().rsi(stock[0], date, 5)
         if rsi < 85.0 and rsi > 15.0:
+            stock.append(rsi+'%')
             DayTradeCandidate.append(stock)
-        time.sleep(5)
+        time.sleep(3)
     
     for stock in DayTradeCandidate:
         print(stock)
-        
+          
     
 if __name__ == '__main__':
     main()
