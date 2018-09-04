@@ -75,7 +75,7 @@ def main():
     
     #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
     StockCandidate = p2t.permission().daytradeable(StockCandidate, date)
-    StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180903')
+    #StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180903')
   
     DayTradeCandidate = []
     for stock in StockCandidate:
@@ -91,4 +91,5 @@ def main():
           
     
 if __name__ == '__main__':
-    main()
+    #main()
+    print(parm.getparm().bbandsparm('0050', 0.8, '20180903'))
