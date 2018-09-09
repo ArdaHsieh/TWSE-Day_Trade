@@ -8,11 +8,9 @@ Auther: Arda
 """
 # Public modules
 import json
-from bs4 import BeautifulSoup
-import datetime
 
 # My modules
-from basiccrawlmethod import htmlgetter as getter
+import basiccrawlmethod as bcmethod
 
 
 class permission:
@@ -24,7 +22,7 @@ class permission:
     # Return a 2-D stock list.
     def sbmsbellowpar(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWT92U?response=json&date=" + date
-        SBMSData = json.loads(getter.geturl(urlTWSE))['data']
+        SBMSData = json.loads(bcmethod.htmlgetter().geturl(urlTWSE))['data']
     
         SBMSResult = []
         
@@ -46,8 +44,8 @@ class permission:
     # Return a 2-D stock list.
     def daytradeable(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        DayTradeData = json.loads(getter.geturl(urlTWSE))['data']
-    
+        DayTradeData = json.loads(bcmethod.htmlgetter().geturl(urlTWSE))['data']
+   
         DayTradeResult = []
         
         for Candidate in StockCandidate:
@@ -67,7 +65,7 @@ class permission:
     # Return a 2-D stock list.
     def cansellb4buy(self, StockCandidate, date):
         urlTWSE = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=json&date=" + date
-        CanSb4BData = json.loads(getter.geturl(urlTWSE))['data']
+        CanSb4BData = json.loads(bcmethod.htmlgetter().geturl(urlTWSE))['data']
     
         CanSb4BResult = []
         

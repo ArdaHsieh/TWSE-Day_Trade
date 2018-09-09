@@ -9,9 +9,6 @@ Auther: Arda
 # Public modules
 import json
 from bs4 import BeautifulSoup
-import datetime
-import time
-import numpy as np
 
 # My modules
 import basiccrawlmethod as bcmethod
@@ -44,32 +41,8 @@ class getparm:
                 num = bcmethod.numtrans().strtonum(Data[1].text)
                 UpMA.append(num)
 
-        if len(UpMA) and len(DownMA):
-            return (1 + sum(UpMA)/(2*(sum(UpMA)+sum(DownMA))),
-                    1 + sum(DownMA)/(2*(sum(UpMA)+sum(DownMA))))
-        else:
-            url = ( 'https://www.wantgoo.com/stock/astock/agentstat_ajax?StockNo='
-                  + stockNum + '&Types=3&'
-                  + 'StartDate=' + date + '&EndDate=' + date + '&Rows=15')
-            MADataUp = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues'].split(',')
-            up = 0.0
-            for i in range(len(MADataUp)):
-                if (i+2)%7 == 0:
-                    up += bcmethod.numtrans().strtonum(MADataUp[i])
-            
-            url = ( 'https://www.wantgoo.com/stock/astock/agentstat_ajax?StockNo='
-                  + stockNum + '&Types=4&'
-                  + 'StartDate=' + date + '&EndDate=' + date + '&Rows=15')
-            MADataDn = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues'].split(',')
-            dn = 0.0
-            for i in range(len(MADataDn)):
-                if (i+2)%7 == 0:
-                    dn -= bcmethod.numtrans().strtonum(MADataDn[i])
-            
-            if len(UpMA):
-                return 1.0 + up/(2.0*(up+dn)), 1.0 + dn/(2.0*(up+dn))
-            elif len(DownMA):
-                return 1.0 + dn/(2.0*(up+dn)), 1.0 + up/(2.0*(up+dn))
+        return [1 + sum(UpMA)/(2*(sum(UpMA)+sum(DownMA))),
+                1 + sum(DownMA)/(2*(sum(UpMA)+sum(DownMA)))]
             
 
     # Return Bollinger Bands' top and buttom which are amplitude/10 + 1.5
@@ -89,4 +62,4 @@ class getparm:
                 priceAvg = float(PriceMA[i-1][0:-2])
                 break
             
-        return float(stockAmp)/10.0 + 1.5, priceAvg*0.015
+        return [float(stockAmp)/10.0 + 1.5, priceAvg*0.015]

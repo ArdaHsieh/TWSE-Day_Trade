@@ -13,15 +13,16 @@ import time
 
 
 # Get html content
-class htmlgetter:
+class htmlgetter(object):
     # Request web page with url and method get.
     def geturl(self, url):
         headers = {
                    'user-agent': 'Mozilla/5.0 (Windows NT 6.1)'
                                + 'AppleWebKit/537.36 (KHTML, like Gecko)'
                                + 'Chrome/52.0.2743.116 Safari/537.36'
-                  }   
-        return requests.get(url, headers = headers).text.encode('utf-8-sig')
+                  }
+        
+        return requests.get(url, headers = headers).text#.encode('utf-8-sig')
     
     
 # Time transfer tools.

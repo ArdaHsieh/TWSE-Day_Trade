@@ -9,7 +9,7 @@ Auther: Arda
 # Public modules
 from bs4 import BeautifulSoup
 import datetime
-import time
+import pandas as pd
 
 # My modules
 import basiccrawlmethod as bcmethod
@@ -68,28 +68,81 @@ def amplitudefilter(rowData):
     return AmpFilterResult   
    
     
-def main():  
-    date = '20180831'
+def main():
+    closeDay = input("Stock close day(yyyymmdd): ")
+    tradeDay = input("Trade day(yyyymmdd): ")
     urlAmp = 'https://www.wantgoo.com/stock/twstock/stat?type=amplitude'
     StockCandidate = amplitudefilter(bcmethod.htmlgetter().geturl(urlAmp))
     
     #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
-    StockCandidate = p2t.permission().daytradeable(StockCandidate, date)
+    StockCandidate = p2t.permission().daytradeable(StockCandidate, tradeDay)
     #StockCandidate = p2t.permission().cansellb4buy(StockCandidate, '20180903')
   
-    DayTradeCandidate = []
+    AfterRSICandidate = []
     for stock in StockCandidate:
-        time.sleep(4)
-        rsi = ta.techmethod().rsi(stock[0], date, 5)
+        rsi = ta.techmethod().rsi(stock[0], closeDay, 5)
         if rsi < 85.0 and rsi > 15.0:
-            stock.append(rsi+'%')
-            DayTradeCandidate.append(stock)
-        time.sleep(3)
+            stock.append(str(rsi)+'%')
+            AfterRSICandidate.append(stock)
+                   
+    for stock in AfterRSICandidate:
+        maParm = parm.getparm().maparm(stock[0], closeDay)
+        stock.append(maParm)
+        if maParm[0] < 1.10:
+            stock[-1].append('Bear Only')
+        elif maParm[1] < 1.10:
+            stock[-1].append('Bull Only')
+        else:
+            stock[-1].append('Bull&Bear')
+        
+        stock.append(parm.getparm().bbandsparm(stock[0], float(stock[3][0:-1]), closeDay))
     
+    BearCandidate = [] 
+    for stock in AfterRSICandidate:
+        if stock[6][2] == 'Bear Only':
+            BearCandidate.append(stock)
+    
+    BearCandidate = p2t.permission().cansellb4buy(BearCandidate, tradeDay)
+        
+    DayTradeCandidate = []
+    for stock in AfterRSICandidate:
+        if stock[6][2] != 'Bear Only' or stock in BearCandidate:
+            DayTradeCandidate.append(stock)
+    
+    (Number, Name, Price, Amplitude, Volume, RSI, MA_top_parm, MA_buttom_parm,
+    Trend, BBand_parm, BBand_wide) = ([], [], [], [], [], [], [], [], [], [], [])
     for stock in DayTradeCandidate:
-        print(stock)
+        Number.append(stock[0])
+        Name.append(stock[1])
+        Price.append(stock[2])
+        Amplitude.append(stock[3])
+        Volume.append(stock[4])
+        RSI.append(stock[5])
+        MA_top_parm.append(stock[6][0])
+        MA_buttom_parm.append(stock[6][1])
+        Trend.append(stock[6][2])
+        BBand_parm.append(stock[7][0])
+        BBand_wide.append(stock[7][1])
+    
+    CanDataFrame = {
+                    'Number' : Number,
+                    'Name' : Name,
+                    'Price' : Price,
+                    'Amplitude' : Amplitude,
+                    'Volume' : Volume,
+                    'RSI' : RSI,
+                    'MA_top_parm' : MA_top_parm,
+                    'MA_buttom_parm' : MA_buttom_parm,
+                    'Trend' : Trend,
+                    'BBand_parm' : BBand_parm,
+                    'BBand_wide' : BBand_wide
+                   } 
+    CanColumns = ['Number', 'Name', 'Price', 'Amplitude', 'Volume', 'RSI',
+                  'MA_top_parm', 'MA_buttom_parm', 'Trend', 'BBand_parm', 'BBand_wide']
+    
+    Candidate = pd.DataFrame(CanDataFrame, columns = CanColumns)
+    Candidate.to_csv('Candidate' + tradeDay + '.csv', encoding='big5')
           
     
 if __name__ == '__main__':
-    #main()
-    print(parm.getparm().bbandsparm('0050', 0.8, '20180903'))
+    main()
