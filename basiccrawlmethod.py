@@ -32,6 +32,10 @@ class timetrans:
         datetime8 = date + '08'
         return time.mktime(datetime.datetime.strptime(datetime8, "%Y%m%d%H").timetuple())
     
+    
+    def ad2re(self, adText):
+        return (str(int(adText[0:4]) - 1911) + '/' + adText[4:6] + '/' + adText[6:8])
+        
 
 # Number tools.
 class numtrans:

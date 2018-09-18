@@ -9,6 +9,7 @@ Auther: Arda
 # Public modules
 from bs4 import BeautifulSoup
 import pandas as pd
+import time
 
 # My modules
 import basiccrawlmethod as bcmethod
@@ -34,22 +35,21 @@ def amplitudefilter():
                     stockPrice = float(Data3[2].text)
                     stockAmp = bcmethod.numtrans().strtonum(Data3[7].text)
                     stockVol = bcmethod.numtrans().strtonum(Data3[11].text)/1000.0
-                    stockVal = bcmethod.numtrans().strtonum(Data3[13].text)/1000.0
                     
                     if stockAmp >= 5.0:
                         if len(stockNum) == 4:
                             if stockPrice >= 10.0 and stockPrice <= 25.0 and stockVol >= 10000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice, 
-                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
+                                                        str(stockAmp) + '%', stockVol])
                             elif stockPrice >= 50.0 and stockPrice <= 68.0 and stockVol >= 8000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
+                                                        str(stockAmp) + '%', stockVol])
                             elif stockPrice >= 100.0 and stockPrice <= 408.0 and stockVol >= 6000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
+                                                        str(stockAmp) + '%', stockVol])
                             elif stockPrice >= 500.0 and stockVol >= 4000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
+                                                        str(stockAmp) + '%', stockVol])
                     else:
                         return AmpFilterResult
             
@@ -83,7 +83,8 @@ def main():
         else:
             stock[-1].append('Bull&Bear')
         
-        stock.append(parm.getparm().bbandsparm(float(stock[3][0:-1]), stock[5]))
+        stock.append(parm.getparm().bbandsparm(stock[0], float(stock[3][0:-1]), closeDay))
+        time.sleep(5)
     
     BearCandidate = [] 
     for stock in AfterRSICandidate:
@@ -105,13 +106,13 @@ def main():
         Price.append(stock[2])
         Amplitude.append(stock[3])
         Volume.append(stock[4])
-        MeanPrice.append(stock[5])
-        RSI.append(stock[6])
-        MA_top_parm.append(stock[7][0])
-        MA_buttom_parm.append(stock[7][1])
-        Trend.append(stock[7][2])
-        BBand_parm.append(stock[8][0])
-        BBand_wide.append(stock[8][1])
+        MeanPrice.append(stock[7][0])
+        RSI.append(stock[5])
+        MA_top_parm.append(stock[6][0])
+        MA_buttom_parm.append(stock[6][1])
+        Trend.append(stock[6][2])
+        BBand_parm.append(stock[7][1])
+        BBand_wide.append(stock[7][2])
     
     CanDataFrame = {
                     'Number' : Number,
@@ -136,3 +137,4 @@ def main():
     
 if __name__ == '__main__':
     main()
+    

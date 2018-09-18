@@ -48,5 +48,14 @@ class getparm:
     # Return Bollinger Bands' top and buttom which are amplitude/10 + 1.5
     # and Bollinger Bands' wide
     # Return float.
-    def bbandsparm(self, stockAmp, stockMP):            
-        return [float(stockAmp)/10.0 + 1.5, stockMP*0.015]
+    def bbandsparm(self, stockNum, stockAmp, closeDay):
+        urlTWSE = ( "http://www.tse.com.tw/exchangeReport/STOCK_DAY?response=json&date="
+                  + closeDay + "&stockNo=" + stockNum)
+        StockTradeData = json.loads(bcmethod.htmlgetter().geturl(urlTWSE))['data']       
+        for stock in StockTradeData:
+            if bcmethod.timetrans().ad2re(closeDay) in stock:
+                vol = bcmethod.numtrans().strtonum(stock[1])
+                val = bcmethod.numtrans().strtonum(stock[2])
+                meanPrice = (val / vol)
+                break
+        return [meanPrice, float(stockAmp)/10.0 + 1.5, meanPrice*0.015]
