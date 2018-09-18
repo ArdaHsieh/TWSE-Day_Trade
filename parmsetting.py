@@ -48,18 +48,5 @@ class getparm:
     # Return Bollinger Bands' top and buttom which are amplitude/10 + 1.5
     # and Bollinger Bands' wide
     # Return float.
-    def bbandsparm(self, stockNum, stockAmp, date):
-        dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
-        url = ( 'https://www.wantgoo.com/stock/'
-              + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
-              + 'StockNo=' + stockNum + '&Kcounts=484&Type=%E6%97%A5K_%E6%94%B6%E7%9B%A4%E5%83%B9&isCleanCache=false')
-        priceMAText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']
-        PriceMA = priceMAText.split(',')
-        PriceMA = PriceMA[::-1]
-        
-        for i in range(len(PriceMA)):
-            if PriceMA[i] == dateTS:
-                priceAvg = float(PriceMA[i-1][0:-2])
-                break
-            
-        return [float(stockAmp)/10.0 + 1.5, priceAvg*0.015]
+    def bbandsparm(self, stockAmp, stockMP):            
+        return [float(stockAmp)/10.0 + 1.5, stockMP*0.015]

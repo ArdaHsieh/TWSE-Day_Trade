@@ -34,21 +34,22 @@ def amplitudefilter():
                     stockPrice = float(Data3[2].text)
                     stockAmp = bcmethod.numtrans().strtonum(Data3[7].text)
                     stockVol = bcmethod.numtrans().strtonum(Data3[11].text)/1000.0
+                    stockVal = bcmethod.numtrans().strtonum(Data3[13].text)/1000.0
                     
                     if stockAmp >= 5.0:
                         if len(stockNum) == 4:
                             if stockPrice >= 10.0 and stockPrice <= 25.0 and stockVol >= 10000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice, 
-                                                        str(stockAmp) + '%', stockVol])
+                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
                             elif stockPrice >= 50.0 and stockPrice <= 68.0 and stockVol >= 8000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol])
+                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
                             elif stockPrice >= 100.0 and stockPrice <= 408.0 and stockVol >= 6000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol])
+                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
                             elif stockPrice >= 500.0 and stockVol >= 4000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice,
-                                                        str(stockAmp) + '%', stockVol])
+                                                        str(stockAmp) + '%', stockVol, stockVal/stockVol])
                     else:
                         return AmpFilterResult
             
@@ -61,13 +62,9 @@ def main():
     tradeDay = input("Trade day(yyyymmdd): ")
     
     StockCandidate = amplitudefilter()
-    print(StockCandidate)
-    print('------------')
     
     #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
     StockCandidate = p2t.permission().daytradeable(StockCandidate, tradeDay)
-    print(StockCandidate)
-    print('------------')
   
     AfterRSICandidate = []
     for stock in StockCandidate:
@@ -75,8 +72,6 @@ def main():
         if rsi < 85.0 and rsi > 15.0:
             stock.append(str(rsi)+'%')
             AfterRSICandidate.append(stock)
-    print(AfterRSICandidate)
-    print('------------')
                    
     for stock in AfterRSICandidate:
         maParm = parm.getparm().maparm(stock[0], closeDay)
@@ -88,7 +83,7 @@ def main():
         else:
             stock[-1].append('Bull&Bear')
         
-        stock.append(parm.getparm().bbandsparm(stock[0], float(stock[3][0:-1]), closeDay))
+        stock.append(parm.getparm().bbandsparm(float(stock[3][0:-1]), stock[5]))
     
     BearCandidate = [] 
     for stock in AfterRSICandidate:
@@ -102,20 +97,21 @@ def main():
         if stock[6][2] != 'Bear Only' or stock in BearCandidate:
             DayTradeCandidate.append(stock)
     
-    (Number, Name, Price, Amplitude, Volume, RSI, MA_top_parm, MA_buttom_parm,
-    Trend, BBand_parm, BBand_wide) = ([], [], [], [], [], [], [], [], [], [], [])
+    (Number, Name, Price, Amplitude, Volume, MeanPrice, RSI, MA_top_parm, MA_buttom_parm,
+    Trend, BBand_parm, BBand_wide) = ([], [], [], [], [], [], [], [], [], [], [], [])
     for stock in DayTradeCandidate:
         Number.append(stock[0])
         Name.append(stock[1])
         Price.append(stock[2])
         Amplitude.append(stock[3])
         Volume.append(stock[4])
-        RSI.append(stock[5])
-        MA_top_parm.append(stock[6][0])
-        MA_buttom_parm.append(stock[6][1])
-        Trend.append(stock[6][2])
-        BBand_parm.append(stock[7][0])
-        BBand_wide.append(stock[7][1])
+        MeanPrice.append(stock[5])
+        RSI.append(stock[6])
+        MA_top_parm.append(stock[7][0])
+        MA_buttom_parm.append(stock[7][1])
+        Trend.append(stock[7][2])
+        BBand_parm.append(stock[8][0])
+        BBand_wide.append(stock[8][1])
     
     CanDataFrame = {
                     'Number' : Number,
@@ -123,6 +119,7 @@ def main():
                     'Price' : Price,
                     'Amplitude' : Amplitude,
                     'Volume' : Volume,
+                    'MeanPrice' : MeanPrice,
                     'RSI' : RSI,
                     'MA_top_parm' : MA_top_parm,
                     'MA_buttom_parm' : MA_buttom_parm,
@@ -130,7 +127,7 @@ def main():
                     'BBand_parm' : BBand_parm,
                     'BBand_wide' : BBand_wide
                    } 
-    CanColumns = ['Number', 'Name', 'Price', 'Amplitude', 'Volume', 'RSI',
+    CanColumns = ['Number', 'Name', 'Price', 'Amplitude', 'Volume', 'MeanPrice','RSI',
                   'MA_top_parm', 'MA_buttom_parm', 'Trend', 'BBand_parm', 'BBand_wide']
     
     Candidate = pd.DataFrame(CanDataFrame, columns = CanColumns)
@@ -139,4 +136,3 @@ def main():
     
 if __name__ == '__main__':
     main()
-    #amplitudefilter()
