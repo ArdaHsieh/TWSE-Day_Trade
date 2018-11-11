@@ -40,7 +40,7 @@ class timetrans:
 # Number tools.
 class numtrans:
     # convert number strings to number.
-    #for example, 1,900 to 1900.
+    # for example, 1,900 to 1900.
     def strtonum(self, string):
         num = ''
         for char in string:

@@ -61,10 +61,13 @@ def main():
     closeDay = input("Stock close day(yyyymmdd): ")
     tradeDay = input("Trade day(yyyymmdd): ")
     
+    print('Searching.', end='')
     StockCandidate = amplitudefilter()
+    print('..', end='')
     
     #StockCandidate = p2t.permission().sbmsbellowpar(StockCandidate, date)
     StockCandidate = p2t.permission().daytradeable(StockCandidate, tradeDay)
+    print('..', end='')
   
     AfterRSICandidate = []
     for stock in StockCandidate:
@@ -72,6 +75,7 @@ def main():
         if rsi < 85.0 and rsi > 15.0:
             stock.append(str(rsi)+'%')
             AfterRSICandidate.append(stock)
+    print('..', end='')
                    
     for stock in AfterRSICandidate:
         maParm = parm.getparm().maparm(stock[0], closeDay)
@@ -85,11 +89,13 @@ def main():
         
         stock.append(parm.getparm().bbandsparm(stock[0], float(stock[3][0:-1]), closeDay))
         time.sleep(5)
+    print('...')
     
     BearCandidate = [] 
     for stock in AfterRSICandidate:
         if stock[6][2] == 'Bear Only':
             BearCandidate.append(stock)
+    print('Filtering.....', end='')
     
     BearCandidate = p2t.permission().cansellb4buy(BearCandidate, tradeDay)
         
@@ -113,6 +119,7 @@ def main():
         Trend.append(stock[6][2])
         BBand_parm.append(stock[7][1])
         BBand_wide.append(stock[7][2])
+    print('.....')
     
     CanDataFrame = {
                     'Number' : Number,
@@ -130,11 +137,14 @@ def main():
                    } 
     CanColumns = ['Number', 'Name', 'Price', 'Amplitude', 'Volume', 'MeanPrice','RSI',
                   'MA_top_parm', 'MA_buttom_parm', 'Trend', 'BBand_parm', 'BBand_wide']
+    print('Writing...', end='')
     
     Candidate = pd.DataFrame(CanDataFrame, columns = CanColumns)
+    print('.....', end='')
     Candidate.to_csv('Candidate' + tradeDay + '.csv', index=0, encoding='big5')
+    print('....')
+    print('Finish')
           
     
 if __name__ == '__main__':
-    main()
-    
+    main()    
