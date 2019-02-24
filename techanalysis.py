@@ -20,22 +20,20 @@ class techmethod:
     # date = yyyymmdd
     # Return a float, for example, 65.5 means RSI = 65.5% .
     def rsi(self, stockNum, date, days=5):
-        dateTS = '[' + str(int((bcmethod.timetrans().timestamp(date)))) + '000'
-        url = ( 'https://www.wantgoo.com/stock/' 
-              + '%E5%80%8B%E8%82%A1%E7%B7%9A%E5%9C%96/%E6%8A%80%E8%A1%93%E7%B7%9A%E5%9C%96%E8%B3%87%E6%96%99?'
+        dateTS = int((bcmethod.timetrans().timestamp(date)))*1000
+        url = ( 'https://www.wantgoo.com/stock/techchart/highchartdata?'
               + 'StockNo=' + stockNum 
-              + '&Kcounts=245&Type=%E6%97%A5K_RSI&isCleanCache=false')
+              + '&Kcounts=10&Type=%E6%97%A5K_RSI%7C' )
         
         rsiDataText = json.loads(bcmethod.htmlgetter().geturl(url))['returnValues']['value']
+        
         data = rsiDataText.split('=')
 
-        rsiData = data[int(days/5)].split(';')
-        RsiData = rsiData[0].split(',')
-        RsiData = RsiData[::-1]
+        RsiData = eval(data[int(days/5)].split(';')[0])
         
         for i in range(len(RsiData)):
-            if RsiData[i] == dateTS:
-                return float(RsiData[i-1][0:-2])
+            if dateTS == RsiData[i]['x']:
+                return RsiData[i]['y']
                 break
     
     
