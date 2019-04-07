@@ -42,8 +42,11 @@ class numtrans:
     # convert number strings to number.
     # for example, 1,900 to 1900.
     def strtonum(self, string):
-        num = ''
-        for char in string:
-            if char in ['-', '.', '0', '1', '2', '3' , '4', '5', '6', '7', '8', '9']:
-                num += char
-        return float(num)
+        try:
+            num = ''
+            for char in string:
+                if char in ['-', '.', '0', '1', '2', '3' , '4', '5', '6', '7', '8', '9']:
+                    num += char
+            return float(num)
+        except:
+            return 0.0

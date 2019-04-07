@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  4 02:40:01 2019
 
-import techanalysis as ta
+@author: arda
+"""
 
-print(ta.techmethod().ma('2337','20190222'))
-
+import twstock
+ 
+print(twstock.Stock('0050').price)
