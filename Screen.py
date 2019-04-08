@@ -36,9 +36,9 @@ def amplitudefilter():
                     stockAmp = bcmethod.numtrans().strtonum(Data3[7].text)
                     stockVol = bcmethod.numtrans().strtonum(Data3[11].text)/1000.0
                     
-                    if stockAmp >= 5.0:
+                    if stockAmp >= 2.0:
                         if len(stockNum) == 4:
-                            if stockPrice >= 10.0 and stockPrice <= 25.0 and stockVol >= 10000:
+                            if stockPrice >= 10.0 and stockPrice <= 35.0 and stockVol >= 10000:
                                 AmpFilterResult.append([stockNum, stockName, stockPrice, 
                                                         str(stockAmp) + '%', stockVol])
                             elif stockPrice >= 50.0 and stockPrice <= 68.0 and stockVol >= 8000:
@@ -72,7 +72,7 @@ def main():
     AfterRSICandidate = []
     for stock in StockCandidate:
         rsi = ta.techmethod().rsi(stock[0], closeDay, 5)
-        if rsi < 85.0 and rsi > 15.0:
+        if rsi < 99.99 and rsi > 0.01:
             stock.append(str(rsi)+'%')
             AfterRSICandidate.append(stock)
     print('..', end='')
@@ -80,9 +80,9 @@ def main():
     for stock in AfterRSICandidate:
         maParm = parm.getparm().maparm(stock[0], closeDay)
         stock.append(maParm)
-        if maParm[0] < 1.10:
+        if maParm[0] < 1.20:
             stock[-1].append('Bear Only')
-        elif maParm[1] < 1.10:
+        elif maParm[1] < 1.20:
             stock[-1].append('Bull Only')
         else:
             stock[-1].append('Bull&Bear')

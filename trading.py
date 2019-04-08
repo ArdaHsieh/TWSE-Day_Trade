@@ -83,4 +83,23 @@ class estimatetool:
         lowLosRSI = 1.5*rsiLow
         
         return highRigRSI, lowRigRSI, highLosRSI, lowLosRSI
+    
+
+class tacaluclate:
+    def updnma(self, RSIt_1, RSIt, Ut, Dt, N):
+        UPt_1 = RSIt_1*((RSIt-100.)*Ut + RSIt*Dt) / (100.*(RSIt_1 - RSIt))
+        DNt_1 = (100. - RSIt_1)*UPt_1 / RSIt_1
+        
+        UPt = UPt_1 + Ut/float(N)
+        DNt = DNt_1 + Dt/float(N)
+        
+        return UPt, DNt
+    
+    
+    def rsi(self, UPt_1, DNt_1, Ut, Dt, N):
+        UPt = UPt_1 + Ut/float(N)
+        DNt = DNt_1 + Dt/float(N)
+        
+        return 100.*(UPt/(UPt+DNt))
+         
         
